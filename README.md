@@ -26,9 +26,9 @@ react-native run-ios
 
 The following **required** functionality is complete:
 
-* [ ] User can enter a bill amount, choose a tip percentage, and see the tip and total values.
-* [ ] Settings page to change Scene Transition
-* [ ] Navigator integrate (keep it's simple)
+* [x] User can enter a bill amount, choose a tip percentage, and see the tip and total values.
+* [x] Settings page to change Scene Transition
+* [x] Navigator integrate (keep it's simple)
 
 The following **optional** features are implemented:
 * [ ] UI animations
