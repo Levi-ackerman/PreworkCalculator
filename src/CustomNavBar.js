@@ -5,6 +5,8 @@ import React, {Component} from 'react';
 import {
   TouchableOpacity,
   Text,
+  Button,
+  StyleSheet
 } from 'react-native';
 import {
   Navigator,
@@ -17,13 +19,14 @@ const NavigationBarRouteMapper = {
   RightButton: (route, navigator, index, navState) => {
     if(route.id != 'CalculatorPage'){
       return (
-        <TouchableOpacity onPress={() => navigator.pop()}>
+        // Can not refresh data after use pop() so use push instead
+        <TouchableOpacity style={styles.buttonStyle} onPress={() => navigator.push({id: 'CalculatorPage'})}>
           <Text>Save</Text>
         </TouchableOpacity>
       );
     }else{
       return (
-        <TouchableOpacity onPress={() => navigator.push({id: 'SettingPage'})}>
+        <TouchableOpacity style={styles.buttonStyle} onPress={() => navigator.push({id: 'SettingPage'})}>
           <Text>Setting</Text>
         </TouchableOpacity>
       );
@@ -33,6 +36,12 @@ const NavigationBarRouteMapper = {
     return;
   },
 };
+
+const styles = StyleSheet.create({
+  buttonStyle: {
+    margin: 8
+  },
+});
 
 // export this component
 module.exports = (

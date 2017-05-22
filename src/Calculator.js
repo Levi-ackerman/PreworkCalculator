@@ -8,7 +8,9 @@ import {
   Text,
   View,
   TextInput,
+  AsyncStorage
 } from 'react-native';
+import { tipPercents } from './Constant';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 
 export default class Calculator extends Component {
@@ -16,17 +18,11 @@ export default class Calculator extends Component {
   constructor() {
     super();
 
-    this.tipPercents = [
-      {percent: 0.1, value: '10%'},
-      {percent: 0.15, value: '15%'},
-      {percent: 0.5, value: '50%'},
-    ];
-
     this.state = {
       selectedIndex: 0,
       billAmount: 0,
       tipAmount: 0,
-      percent: this.tipPercents[0].percent,
+      percent: tipPercents[0].value,
       result: 0,
     };
 
@@ -46,18 +42,37 @@ export default class Calculator extends Component {
     this.setState({selectedIndex: index});
 
     billAmount = parseFloat(billAmount);
-    let percent = this.tipPercents[index].percent;
+    let percent = tipPercents[index].value;
     let tipAmount = percent * billAmount;
     let result = billAmount + tipAmount;
 
     this.setState({
       tipAmount : tipAmount ? tipAmount : 0,
-      percent: this.tipPercents[index].percent,
+      percent: tipPercents[index].value,
       result : result ? result : 0
     });
   }
 
+  componentDidMount() {
+    this.getPersisData();
+  }
+
+  async getPersisData() {
+    try {
+      let tipPercentValue = await AsyncStorage.getItem("PERCENT_SELECTED");
+      let inValue = parseInt(tipPercentValue ? tipPercentValue : 0);
+      this.handleIndexChange(inValue);
+    } catch (error) {
+      console.log("Hmm, something when wrong when get data..." + error);
+    }
+  }
+
   render() {
+    let listValues = [];
+    for(let i = 0; i < tipPercents.length; i++){
+      listValues.push(tipPercents[i].label);
+    }
+
     return (
       <View style={styles.container}>
         <Text style={styles.title}>
@@ -71,6 +86,7 @@ export default class Calculator extends Component {
               style={styles.input}
               keyboardType={'numeric'}
               maxLength={10}
+              autoFocus={true}
               underlineColorAndroid={'transparent'}
               onChangeText={this.handleInputChange.bind(this)}
               returnKeyType="done"/>
@@ -84,7 +100,7 @@ export default class Calculator extends Component {
 
         <View style={styles.verticalMargin}>
           <SegmentedControlTab
-            values={['10%', '15%', '50%']}
+            values={listValues}
             selectedIndex={this.state.selectedIndex}
             onTabPress={this.handleIndexChange.bind(this)}
           />
@@ -121,7 +137,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     margin: 16,
-    marginTop : 56
   },
   horizontalContainer: {
     flexDirection: 'row',
@@ -131,7 +146,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 36,
     marginLeft: 8,
-    borderColor: '#56fa6e',
+    borderColor: '#4168fa',
     borderWidth: 1
   },
   input: {
@@ -146,7 +161,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 30,
     alignSelf: 'center',
-    marginTop: 32
   },
   verticalMargin: {
     marginTop: 16
